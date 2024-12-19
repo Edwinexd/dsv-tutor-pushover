@@ -36,7 +36,7 @@ while True:
     response = requests.get(URL, cookies=cookies_dict, timeout=5, headers={"X-Powered-By": "dsv-tutor-pushover (https://github.com/Edwinexd/dsv-tutor-pushover); Contact (edwin.sundberg@dsv.su.se)"})
     if response.status_code != 200 or "Log in" in response.text:
         print(f"Status code: {response.status_code}, contains 'Log in': {'Log in' in response.text}")
-        time.sleep(2**failures)
+        time.sleep(min(2**failures, 32))
         failures += 1
         continue
     
@@ -52,7 +52,7 @@ while True:
         continue
 
     if "Nästa i kön" in response.text:
-        name = response.text.split("Nästa i kön")[1].split("</td>")[0].split("<br />")[1].strip()
+        name = ' '.join(response.text.split("Nästa i kön")[1].split("</td>")[0].split("<br />")[1].strip().replace("\n", "").split())
         if last_name == name:
             continue
         last_name = name
@@ -69,6 +69,3 @@ while True:
     print("Unknown state, dumping response")
     print(response.text)
     time.sleep(5)
-
-
-print(response.text)
