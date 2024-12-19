@@ -26,7 +26,7 @@ pushover_user = os.environ["PUSHOVER_USER"]
 
 def send_notification(token, user, message):
     url = "https://api.pushover.net/1/messages.json"
-    data = {"token": token, "user": user, "message": message, "priority": 1, "sound": "gamelan"}
+    data = {"token": token, "user": user, "message": message, "priority": 1, "sound": "gamelan", "ttl": 60*60}
     return requests.post(url, data=data, timeout=5)
 
 failures = 0
@@ -64,8 +64,11 @@ while True:
     if any(val in response.text for val in ["Du är på väg till", "Du är hos"]):
         # Busy
         time.sleep(3)
-        break
+        continue
 
     print("Unknown state, dumping response")
     print(response.text)
     time.sleep(5)
+
+print(response.text)
+send_notification(pushover_key, pushover_user, "Bye!")
